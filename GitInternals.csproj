@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="Objects\" />
-    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>
