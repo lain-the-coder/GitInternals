@@ -4,6 +4,9 @@ namespace GitInternals
 {
     class Program
     {
+        //Path to your git repository
+        static string GitRepoPath = @"\\wsl.localhost\Ubuntu-22.04\home\dev\workspace\github.com\lain-the-coder\git-internals-deep-dive\.git";
+
         static void Main(string[] args)
         {
             if (args.Length == 0)
@@ -11,7 +14,9 @@ namespace GitInternals
                 showUsage();
                 return;
             }
+
             string command = args[0];
+
             switch (command)
             {
                 case "read-blob":
@@ -37,6 +42,7 @@ namespace GitInternals
                     showUsage();
                     break;
             }
+
             static void showUsage()
             {
                 Console.WriteLine("GitInternals - A Git object reader");
@@ -48,27 +54,35 @@ namespace GitInternals
                 Console.WriteLine("  read-commit <hash>    Read and display a commit object");
                 Console.WriteLine("  log <branch>          Walk commit history");
                 Console.WriteLine("  verify-object <hash>  Verify object integrity");
+                Console.WriteLine($"Git Repository: {GitRepoPath}");
+
             }
+
             static void ReadBlob(string[] args)
             {
                 Console.WriteLine("TODO: Read blob");
             }
+
             static void HashObject(string[] args)
             {
                 Console.WriteLine("TODO: Hash object");
             }
+
             static void ReadTree(string[] args)
             {
                 Console.WriteLine("TODO: Read tree");
             }
+
             static void ReadCommit(string[] args)
             {
                 Console.WriteLine("TODO: Read commit");
             }
+
             static void Log(string[] args)
             {
                 Console.WriteLine("TODO: Log");
             }
+
             static void VerifyObject(string[] args)
             {
                 Console.WriteLine("TODO: Verify object");
