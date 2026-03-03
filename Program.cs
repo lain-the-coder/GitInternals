@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Text;
+using GitInternals.Utils;
 
 namespace GitInternals
 {
@@ -60,7 +63,18 @@ namespace GitInternals
 
             static void ReadBlob(string[] args)
             {
-                Console.WriteLine("TODO: Read blob");
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Usage: read-blob <hash>");
+                    return;
+                }
+                string hash = args[1];
+                Console.WriteLine($"Reading blob: {hash}");
+                //Building file path from Hash
+                string folder = hash.Substring(0, 2);
+                string fileName = hash.Substring(2);
+                string objectPath = Path.Combine(GitRepoPath, "objects", folder, fileName);
+                Console.WriteLine($"Object path: {objectPath}");
             }
 
             static void HashObject(string[] args)
