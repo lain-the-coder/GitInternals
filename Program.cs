@@ -110,7 +110,37 @@ namespace GitInternals
 
             static void HashObject(string[] args)
             {
-                Console.WriteLine("TODO: Hash object");
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Usage: hash-object <file>");
+                    return;
+                }
+                //Get file path
+                string filePath = args[1];
+                
+                //Read file into byte array
+                byte[] contentBytes = File.ReadAllBytes(filePath);
+
+                //Create Git blob header
+                string header = $"blob {contentBytes.Length}\0";
+
+                //Convert header to bytes
+                byte[] headerBytes = Encoding.UTF8.GetBytes(header);
+
+                //Combine header and content bytes
+                //Allocate new byte array to hold header and content
+                byte[] data = new byte[headerBytes.Length + contentBytes.Length];
+                //Copy header bytes to new array
+                Array.Copy(headerBytes, 0, data, 0, headerBytes.Length);    
+                //Copy content bytes to new array after header
+                Array.Copy(contentBytes, 0, data, headerBytes.Length, contentBytes.Length);
+
+                //Calculate SHA-1 hash of combined data
+                string hash = HashHelper.ComputeSHA1(data);
+
+                // Display result
+                Console.WriteLine($"File: {filePath}");
+                Console.WriteLine($"SHA1: {hash}");
             }
 
             static void ReadTree(string[] args)
