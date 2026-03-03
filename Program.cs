@@ -70,11 +70,42 @@ namespace GitInternals
                 }
                 string hash = args[1];
                 Console.WriteLine($"Reading blob: {hash}");
+
                 //Building file path from Hash
                 string folder = hash.Substring(0, 2);
                 string fileName = hash.Substring(2);
                 string objectPath = Path.Combine(GitRepoPath, "objects", folder, fileName);
                 Console.WriteLine($"Object path: {objectPath}");
+
+                //Read file from path into byte array
+                byte[] compressedData = File.ReadAllBytes(objectPath);
+
+                //Decompress data
+                byte[] decompressedData = ZlibHelper.Decompress(compressedData);
+
+                //Convert bytes to string
+                string fullContent = Encoding.UTF8.GetString(decompressedData);
+
+                //Parse header and content(split at null byte \0)
+                int nullByteSeparatorIndex = fullContent.IndexOf('\0');
+                string header = fullContent.Substring(0, nullByteSeparatorIndex);
+                string content = fullContent.Substring(nullByteSeparatorIndex + 1);
+
+                //Parse/split header details by splitting blob and size
+                string[] headerDetails = header.Split(' ');
+                string type = headerDetails[0];
+                int size = int.Parse(headerDetails[1]);
+
+                //Display object details and content
+                Console.WriteLine();
+                Console.WriteLine($"Object Type: {type}");
+                Console.WriteLine($"Size: {size} bytes");
+                Console.WriteLine();
+                Console.WriteLine("Content:");
+                Console.WriteLine("─────────────────────────────────────────");
+                Console.WriteLine(content);
+                Console.WriteLine("─────────────────────────────────────────");
+
             }
 
             static void HashObject(string[] args)
