@@ -19,7 +19,7 @@ namespace GitInternals
             }
 
             string command = args[0];
-
+                    
             switch (command)
             {
                 case "read-blob":
@@ -145,7 +145,7 @@ namespace GitInternals
 
             static void ReadTree(string[] args)
             {
-                Console.WriteLine("TODO: Read tree");
+                
             }
 
             static void ReadCommit(string[] args)
