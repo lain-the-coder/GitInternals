@@ -245,7 +245,7 @@ namespace GitInternals
                 //Same as ReadBlob
                 if (args.Length < 2)
                 {
-                    Console.WriteLine("Usage:...");
+                    Console.WriteLine("Usage: read-commit <hash>");
                     return;
                 }
                 string hash = args[1];
