@@ -177,13 +177,71 @@ namespace GitInternals
 
                 Console.WriteLine($"Header skipped. Starting at position: {position}");
 
-                //List to store entries
+                //Empty List to store entries
                 var entries = new List<TreeEntry>();
                 Console.WriteLine("Total Decompressed bytes: " + decompressedData.Length);
                 Console.WriteLine($"Total bytes to parse(actual data entry without header): {decompressedData.Length - position}");
 
+                //Loop through decompressed data until we reach the end, parsing each entry
+                while (position < decompressedData.Length)
+                {
+                    //Read Mode
+                    int modestart = position; //modestart = 9
 
+                    while (decompressedData[position] != ' ')
+                    {
+                        position++; // Move to next byte until we find a space, stops at null byte; since 1   0   0   6   4   4       a   p   p   .   j   s ; space between mode and filename
+                    }
 
+                    string mode = Encoding.UTF8.GetString(decompressedData, modestart, position - modestart); //Gets the 6 bytes [49, 48, 48, 48, 48, 48]; converts to string "100000" which is the mode(blob)
+
+                    position++; // Move past space
+
+                    //Read Filename
+                    int namestart = position; //namestart = 16
+
+                    while (decompressedData[position] != 0)
+                    {
+                        position++; // Move to next byte until we find a null byte since filename ends with null byte; since app.js\0
+                    }
+
+                    string name = Encoding.UTF8.GetString(decompressedData, namestart, position - namestart); //Gets the 6 bytes [97, 112, 112, 46, 106, 115]; converts to string "app.js" which is the filename
+
+                    position++; // Move past null byte
+
+                    //Read Hash
+                    byte[] hashBytes = new byte[20]; //SHA-1 hash is 20 bytes in binary not hex; this will copy 20 bytes starting from position 23 to hashBytes array
+                    Array.Copy(decompressedData, position, hashBytes, 0, 20);
+
+                    position += 20; // Move position past the hash bytes
+
+                    string hexHash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower(); //Convert hashBytes to hex string
+
+                    //Determine type of object
+                    string type = mode == "040000" ? "tree" : "blob"; //040000 is tree, 100644 is blob
+
+                    //Create TreeEntry object
+                    entries.Add(new TreeEntry
+                    {
+                        Mode = mode,
+                        Name = name,
+                        Hash = hexHash,
+                        Type = type
+                    });
+                }
+
+                Console.WriteLine($"Parsed {entries.Count} entries!");
+
+                Console.WriteLine();
+                Console.WriteLine("Entries:");
+                Console.WriteLine("─────────────────────────────────────────────────────────────────────────────");
+
+                foreach (var entry in entries)
+                {
+                    Console.WriteLine($"{entry.Mode} {entry.Type,-4} {entry.Hash}    {entry.Name}");
+                }
+
+                Console.WriteLine("─────────────────────────────────────────────────────────────────────────────");
             }
 
             static void ReadCommit(string[] args)
