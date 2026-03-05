@@ -2,6 +2,8 @@
 using System.IO;
 using System.Text;
 using GitInternals.Utils;
+using GitInternals.Objects;
+using System.Collections.Generic;
 
 namespace GitInternals
 {
@@ -164,6 +166,24 @@ namespace GitInternals
                 byte[] decompressedData = ZlibHelper.Decompress(compressedData);
 
                 Console.WriteLine("Decompressed successfully.");
+
+                //Skip header - tree <size>\0
+                int position = 0;
+                while (decompressedData[position] != 0)
+                {
+                    position++;
+                }
+                position++; // Move past null byte
+
+                Console.WriteLine($"Header skipped. Starting at position: {position}");
+
+                //List to store entries
+                var entries = new List<TreeEntry>();
+                Console.WriteLine("Total Decompressed bytes: " + decompressedData.Length);
+                Console.WriteLine($"Total bytes to parse(actual data entry without header): {decompressedData.Length - position}");
+
+
+
             }
 
             static void ReadCommit(string[] args)
