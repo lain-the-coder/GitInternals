@@ -145,7 +145,25 @@ namespace GitInternals
 
             static void ReadTree(string[] args)
             {
-                
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Usage: read-tree <hash>");
+                    return;
+                }
+                string hash = args[1];
+                Console.WriteLine($"Reading tree: {hash}");
+
+                //Building file path from Hash
+                string folder = hash.Substring(0, 2);
+                string fileName = hash.Substring(2);
+                string objectPath = Path.Combine(GitRepoPath, "objects", folder, fileName);
+                Console.WriteLine($"Object path: {objectPath}");
+
+                //Read and decompress data
+                byte[] compressedData = File.ReadAllBytes(objectPath);
+                byte[] decompressedData = ZlibHelper.Decompress(compressedData);
+
+                Console.WriteLine("Decompressed successfully.");
             }
 
             static void ReadCommit(string[] args)
