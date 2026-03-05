@@ -246,7 +246,32 @@ namespace GitInternals
 
             static void ReadCommit(string[] args)
             {
-                Console.WriteLine("TODO: Read commit");
+                //Same as ReadBlob
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Usage:...");
+                    return;
+                }
+                string hash = args[1];
+                string folder = hash.Substring(0, 2);
+                string filename = hash.Substring(2);
+                string filepath = Path.Combine(GitRepoPath, "objects", folder, filename);
+                Console.WriteLine($"This is the filepath: {filepath}");
+                byte[] commitByte = File.ReadAllBytes(filepath);
+                byte[] commitDecompressed = ZlibHelper.Decompress(commitByte);
+                string fullContent = Encoding.UTF8.GetString(commitDecompressed);
+                int nullIndex = fullContent.IndexOf('\0');
+                string header = fullContent.Substring(0, nullIndex);
+                string content = fullContent.Substring(nullIndex + 1);
+                string[] headers = header.Split(' ');
+                string type = headers[0];
+                string size = headers[1];
+
+                Console.WriteLine($"Type: {type}");
+                Console.WriteLine($"Size: {size}");
+                Console.WriteLine();
+                Console.WriteLine("Content:");
+                Console.WriteLine(content);
             }
 
             static void Log(string[] args)
