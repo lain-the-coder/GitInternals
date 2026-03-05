@@ -39,9 +39,6 @@ namespace GitInternals
                 case "log":
                     Log(args);
                     break;
-                case "verify-object":
-                    VerifyObject(args);
-                    break;
                 default:
                     Console.WriteLine($"Unknown command: {command}");
                     showUsage();
@@ -58,7 +55,6 @@ namespace GitInternals
                 Console.WriteLine("  read-tree <hash>      Read and display a tree object");
                 Console.WriteLine("  read-commit <hash>    Read and display a commit object");
                 Console.WriteLine("  log <branch>          Walk commit history");
-                Console.WriteLine("  verify-object <hash>  Verify object integrity");
                 Console.WriteLine($"Git Repository: {GitRepoPath}");
 
             }
@@ -277,11 +273,6 @@ namespace GitInternals
             static void Log(string[] args)
             {
                 Console.WriteLine("TODO: Log");
-            }
-
-            static void VerifyObject(string[] args)
-            {
-                Console.WriteLine("TODO: Verify object");
             }
         }
     }
