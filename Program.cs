@@ -252,7 +252,7 @@ namespace GitInternals
                 string folder = hash.Substring(0, 2);
                 string filename = hash.Substring(2);
                 string filepath = Path.Combine(GitRepoPath, "objects", folder, filename);
-                Console.WriteLine($"This is the filepath: {filepath}");
+                Console.WriteLine($"Commit path: {filepath}");
                 byte[] commitByte = File.ReadAllBytes(filepath);
                 byte[] commitDecompressed = ZlibHelper.Decompress(commitByte);
                 string fullContent = Encoding.UTF8.GetString(commitDecompressed);
@@ -263,11 +263,15 @@ namespace GitInternals
                 string type = headers[0];
                 string size = headers[1];
 
-                Console.WriteLine($"Type: {type}");
-                Console.WriteLine($"Size: {size}");
+                //Display object details and content
+                Console.WriteLine();
+                Console.WriteLine($"Object Type: {type}");
+                Console.WriteLine($"Size: {size} bytes");
                 Console.WriteLine();
                 Console.WriteLine("Content:");
+                Console.WriteLine("─────────────────────────────────────────");
                 Console.WriteLine(content);
+                Console.WriteLine("─────────────────────────────────────────");
             }
 
             static void Log(string[] args)
