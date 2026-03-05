@@ -276,7 +276,30 @@ namespace GitInternals
 
             static void Log(string[] args)
             {
-                Console.WriteLine("TODO: Log");
+                if (args.Length < 2)
+                {
+                    Console.WriteLine("Usage: log <branch>");
+                    return;
+                }
+
+                string branchName = args[1];
+
+                //Build path to branch file
+                string branchPath = Path.Combine(GitRepoPath, "refs", "heads", branchName);
+
+                //Check if branch file exists
+                if (!File.Exists(branchPath))
+                {
+                    Console.WriteLine($"Branch '{branchName}' not found at path: {branchPath}");
+                    return;
+                }
+
+                //Read the latest commit hash from the branch file
+                string latestCommitHash = File.ReadAllText(branchPath).Trim();
+
+                Console.WriteLine($"Branch: {branchName}");
+                Console.WriteLine($"Latest commit: {latestCommitHash}");
+                Console.WriteLine();
             }
         }
     }
