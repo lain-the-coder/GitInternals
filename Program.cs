@@ -295,11 +295,61 @@ namespace GitInternals
                 }
 
                 //Read the latest commit hash from the branch file
-                string latestCommitHash = File.ReadAllText(branchPath).Trim();
+                string? latestCommitHash = File.ReadAllText(branchPath).Trim();
 
                 Console.WriteLine($"Branch: {branchName}");
                 Console.WriteLine($"Latest commit: {latestCommitHash}");
                 Console.WriteLine();
+
+                int commitCount = 0;
+
+                while (latestCommitHash != null)
+                {
+                    commitCount++;
+
+                    //Build path to commit object
+                    string folder = latestCommitHash.Substring(0, 2);
+                    string filename = latestCommitHash.Substring(2);
+                    string commitPath = Path.Combine(GitRepoPath, "objects", folder, filename);
+
+                    //Read and decompress commit object
+                    byte[] commitBytes = File.ReadAllBytes(commitPath);
+                    byte[] commitDecompressed = ZlibHelper.Decompress(commitBytes);
+
+                    //Convert to string
+                    string fullContent = Encoding.UTF8.GetString(commitDecompressed);
+
+                    //Skip Header
+                    int nullIndex = fullContent.IndexOf('\0');
+                    string content = fullContent.Substring(nullIndex + 1);
+
+                    string[] lines = content.Split('\n');
+                    string message = "";
+                    string? parentHash = null;
+
+                    //Find Parent and Message
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        if (lines[i].StartsWith("parent "))
+                        {
+                            parentHash = lines[i].Replace("parent ", "");
+                        }
+                        else if (lines[i] == "")
+                        {
+                            //Empty line indicates start of commit message
+                            message = string.Join("\n", lines, i + 1, lines.Length - (i + 1));
+                            break;
+                        }
+                    }
+                    // Display commit
+                    Console.WriteLine($"commit {latestCommitHash}");
+                    Console.WriteLine($"    {message}");
+                    Console.WriteLine();
+
+                    // Move to parent (walk backwards!)
+                    latestCommitHash = parentHash;
+                }
+                Console.WriteLine($"Total commits: {commitCount}");
             }
         }
     }
