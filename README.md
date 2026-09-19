@@ -4,7 +4,7 @@ A command-line tool built in C# that reads and parses Git's internal object stor
 
 ## Project Overview
 
-This project implements Git's core object reading mechanisms from scratch, handling blob objects, tree objects, commits, and commit history traversal. jBuilt to understand Git's internal architecture beyond the porcelain commands.
+This project implements Git's core object reading mechanisms from scratch, handling blob objects, tree objects, commits, and commit history traversal. Built to understand Git's internal architecture beyond the porcelain commands.
 
 ## Features
 
